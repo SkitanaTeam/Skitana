@@ -20,16 +20,10 @@ namespace Skitana.App.Framework.Input
         public object PointerCapturedBy { get; internal set; }
 
         public bool Handled { get; private set; }
-        public bool SkipRest { get; private set; }
 
         public void SetHandled() => Handled = true;
-        public void Skip() => SkipRest = true;
 
-        internal void Reset()
-        {
-            Handled = false;
-            SkipRest = false;
-        }
+        internal void Reset() => Handled = false;
 
         public void CapturePointer(object captureBy)
         {
@@ -50,7 +44,6 @@ namespace Skitana.App.Framework.Input
             Offset = Vector2.Zero;
             PointerCapturedBy = null;
             Handled = false;
-            SkipRest = false;
         }
     }
 }
