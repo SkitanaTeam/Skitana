@@ -2,10 +2,9 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
-using Skitana.App.Framework.Core;
 using System;
 
-namespace Skitana.App.Framework.Services
+namespace Skitana.App.Framework.Abstractions
 {
     public interface IUpdatablesService
     {

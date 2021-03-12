@@ -2,10 +2,11 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
-using Skitana.App.Framework.Core;
 using Skitana.App.Framework.Services;
 using Skitana.App.Framework.Text;
+using Skitana.App.Framework.Abstractions;
 using Skitana.DependencyInjection.Abstractions;
+using Skitana.App.Framework.Input;
 
 namespace Skitana.App.Framework
 {
@@ -17,7 +18,8 @@ namespace Skitana.App.Framework
                     .RegisterSingleton<Dispatcher, IDispatcher>()
                     .RegisterSingleton<UpdatablesService, IUpdatablesService>()
                     .RegisterSingleton<ApplicationStopwatch, IApplicationStopwatch>()
-                    .RegisterSingleton<FontManager, IFontManager>();
+                    .RegisterSingleton<FontManager, IFontManager>()
+                    .RegisterSingleton<GesturesService, IGesturesService>();
         }
     }
 }

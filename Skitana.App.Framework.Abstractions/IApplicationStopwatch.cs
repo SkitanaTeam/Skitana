@@ -4,7 +4,7 @@
 
 using System;
 
-namespace Skitana.App.Framework.Services
+namespace Skitana.App.Framework.Abstractions
 {
     public interface IApplicationStopwatch : IDisposable
     {

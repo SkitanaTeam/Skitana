@@ -4,7 +4,7 @@
 
 using System;
 
-namespace Skitana.App.Framework.Core
+namespace Skitana.App.Framework.Abstractions
 {
     public interface IDispatcher
     {
