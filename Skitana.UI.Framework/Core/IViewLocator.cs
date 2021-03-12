@@ -2,12 +2,10 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
-using System;
-
-namespace Skitana.App.Framework.Core
+namespace Skitana.UI.Framework.Core
 {
-    public interface IUpdatable
+    public interface IViewLocator
     {
-        void Update(TimeSpan globalTime, TimeSpan ellapsedTime);
+        bool LocateView(object viewModel, out string viewPath);
     }
 }
