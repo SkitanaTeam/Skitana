@@ -22,6 +22,9 @@ namespace Skitana.App.Framework.Input
         Swipe = 0x200,
         PointerLost = 0x400,
         HoldCancel = 0x800,
-        CapturedByOther = 0x1000
+        CapturedByOther = 0x1000,
+
+        HoldGestures = Hold | HoldStart | HoldCancel,
+        DragGestures = HorizontalDrag | VerticalDrag | FreeDrag
     }
 }

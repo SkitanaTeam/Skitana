@@ -45,5 +45,12 @@ namespace Skitana.App.Framework.Input
             PointerCapturedBy = null;
             Handled = false;
         }
+
+        public void Rescale(Vector2 scale)
+        {
+            Origin *= scale;
+            Position *= scale;
+            Offset *= scale;
+        }
     }
 }

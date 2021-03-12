@@ -8,10 +8,10 @@ namespace Skitana.App.Framework.Input
 {
     public interface IGesturesService
     {
-        event Action<Gesture> Gesture;
-
         float MinDragSize { get; set; }
         TimeSpan HoldStartTime { get; set; }
         TimeSpan HoldTime { get; set; }
+        void Register(IGestureConsumer consumer);
+        void Unregister(IGestureConsumer consumer);
     }
 }

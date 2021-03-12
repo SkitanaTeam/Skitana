@@ -7,6 +7,7 @@ using Skitana.App.Framework.Helpers;
 using Skitana.Input.Abstractions.Pointers;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace Skitana.App.Framework.Input
@@ -20,11 +21,12 @@ namespace Skitana.App.Framework.Input
         private ConcurrentDictionary<PointerId, PointerDownElement> pointersDown = new ConcurrentDictionary<PointerId, PointerDownElement>();
         private ConcurrentQueue<Gesture> gesturesToPublish = new ConcurrentQueue<Gesture>();
 
-        public float MinDragSize { get; set; }
+        private List<IGestureConsumer> consumers = new List<IGestureConsumer>();
+
+        public float MinDragSize { get; set; } = 10;
         public TimeSpan HoldTime { get; set; } = TimeSpan.FromMilliseconds(1000);
         public TimeSpan HoldStartTime { get; set; } = TimeSpan.FromMilliseconds(250);
 
-        public event Action<Gesture> Gesture;
 
         public GesturesService(IInputPanel inputPanel, IUpdatablesService updatablesService)
         {
@@ -87,6 +89,20 @@ namespace Skitana.App.Framework.Input
             if (pointersDown.TryRemove(args.PointerId, out var pointer))
             {
                 origin = pointer.Origin;
+
+                if(pointer.LockedGesture == GestureType.None)
+                {
+                    if( (origin - args.Position).Length() < MinDragSize )
+                    {
+                        var tapGesture = gesturesPool.Get();
+
+                        tapGesture.Init(args.PointerId, origin, args.Position, args.Time);
+                        tapGesture.GestureType = GestureType.Tap;
+
+                        Publish(tapGesture);
+                    }
+                }
+
                 pointerDownElementsPool.Return(pointer);
             }
 
@@ -122,87 +138,126 @@ namespace Skitana.App.Framework.Input
             {
                 if (Math.Abs(drag.X) > MinDragSize && Math.Abs(drag.X) > Math.Abs(drag.Y))
                 {
-                    pointer.LockedGesture |= GestureType.HorizontalDrag;
+                    pointer.LockedGesture = GestureType.HorizontalDrag;
+                    move = drag;
                 }
                 else if (Math.Abs(drag.Y) > MinDragSize && Math.Abs(drag.Y) > Math.Abs(drag.X))
                 {
-                    pointer.LockedGesture |= GestureType.VerticalDrag;
+                    pointer.LockedGesture = GestureType.VerticalDrag;
+                    move = drag;
                 }
                 else if (drag.Length() > MinDragSize)
                 {
-                    pointer.LockedGesture |= GestureType.FreeDrag;
+                    pointer.LockedGesture = GestureType.FreeDrag;
                     move = drag;
                 }
             }
 
-            if ((pointer.LockedGesture & (GestureType.HorizontalDrag | GestureType.FreeDrag | GestureType.VerticalDrag)) != GestureType.None)
+            if ((pointer.LockedGesture & GestureType.DragGestures) != GestureType.None)
             {
+                var offset = move;
+
+                if (pointer.LockedGesture.HasFlag(GestureType.HorizontalDrag)) offset.Y = 0;
+                if (pointer.LockedGesture.HasFlag(GestureType.VerticalDrag)) offset.X = 0;
+
                 var gesture = gesturesPool.Get();
                 gesture.Init(pointerId, pointer.Origin, pointer.Position, time);
-                gesture.GestureType = pointer.LockedGesture;
-                gesture.Offset = move;
+                gesture.GestureType = pointer.LockedGesture & GestureType.DragGestures;
+                gesture.Offset = offset;
                 Publish(gesture);
-            }
-            else
-            {
-                if (pointer.LockedGesture == GestureType.None)
+
+                if(!pointer.LockedGesture.HasFlag(GestureType.FreeDrag))
                 {
-                    TimeSpan elapsed = time - pointer.DownTime;
-
-                    if (elapsed > HoldStartTime)
-                    {
-                        pointer.LockedGesture = GestureType.HoldStart;
-
-                        var gesture = gesturesPool.Get();
-                        gesture.Init(pointerId, pointer.Origin, pointer.Position, time);
-                        gesture.GestureType = GestureType.HoldStart;
-
-                        Publish(gesture);
-                    }
+                    gesture = gesturesPool.Get();
+                    gesture.Init(pointerId, pointer.Origin, pointer.Position, time);
+                    gesture.GestureType = GestureType.FreeDrag;
+                    gesture.Offset = move;
+                    Publish(gesture);
                 }
-                else if (pointer.LockedGesture == GestureType.HoldStart)
+            }
+        }
+
+        private void AnalizeHolds(PointerId pointerId, PointerDownElement pointer, TimeSpan time)
+        {
+            Vector2 drag = pointer.Position - pointer.Origin;
+
+            if (pointer.LockedGesture == GestureType.None && drag.Length() < MinDragSize)
+            {
+                TimeSpan elapsed = time - pointer.DownTime;
+
+                if (elapsed > HoldStartTime)
                 {
-                    TimeSpan elapsed = time - pointer.DownTime;
+                    pointer.LockedGesture = GestureType.HoldStart;
 
-                    if (move.Length() > MinDragSize)
-                    {
-                        pointer.LockedGesture = GestureType.None;
-                        
-                        var gesture = gesturesPool.Get();
-                        gesture.Init(pointerId, pointer.Origin, pointer.Position, time);
-                        gesture.GestureType = GestureType.HoldCancel;
-                        Publish(gesture);
-                        return;
-                    }
+                    var gesture = gesturesPool.Get();
+                    gesture.Init(pointerId, pointer.Origin, pointer.Position, time);
+                    gesture.GestureType = GestureType.HoldStart;
 
-                    if (elapsed > HoldTime)
-                    {
-                        pointer.LockedGesture = GestureType.Hold;
+                    Publish(gesture);
+                }
+            }
+            else if (pointer.LockedGesture == GestureType.HoldStart)
+            {
+                TimeSpan elapsed = time - pointer.DownTime;
 
-                        var gesture = gesturesPool.Get();
-                        gesture.Init(pointerId, pointer.Origin, pointer.Position, time);
-                        gesture.GestureType = GestureType.Hold;
+                if (drag.Length() > MinDragSize)
+                {
+                    pointer.LockedGesture &= ~GestureType.HoldGestures;
 
-                        Publish(gesture);
-                    }
+                    var gesture = gesturesPool.Get();
+                    gesture.Init(pointerId, pointer.Origin, pointer.Position, time);
+                    gesture.GestureType = GestureType.HoldCancel;
+                    Publish(gesture);
+                    return;
+                }
+
+                if (elapsed > HoldTime)
+                {
+                    pointer.LockedGesture = GestureType.Hold;
+
+                    var gesture = gesturesPool.Get();
+                    gesture.Init(pointerId, pointer.Origin, pointer.Position, time);
+                    gesture.GestureType = GestureType.Hold;
+
+                    Publish(gesture);
                 }
             }
         }
 
         public void Update(TimeSpan globalTime, TimeSpan ellapsedTime)
         {
-            while(gesturesToPublish.TryDequeue(out var gesture))
+            foreach(var id in pointersDown.Keys)
             {
-                Gesture?.Invoke(gesture);
+                if (pointersDown.TryGetValue(id, out var pointer))
+                {
+                    AnalizeHolds(id, pointer, globalTime);
+                }
+            }
+
+            while (gesturesToPublish.TryDequeue(out var gesture))
+            {
+                PublishToConsumers(gesture);
 
                 if (gesture.PointerCapturedBy != null && gesture.GestureType != GestureType.CapturedByOther)
                 {
                     gesture.Reset();
                     gesture.GestureType = GestureType.CapturedByOther;
-                    Gesture?.Invoke(gesture);
+                    PublishToConsumers(gesture);
                 }
                 gesturesPool.Return(gesture);
             }
         }
+
+        private void PublishToConsumers(Gesture gesture)
+        {
+            for(var idx =0; idx < consumers.Count; ++idx)
+            {
+                consumers[idx].OnGesture(gesture);
+                if (gesture.Handled) break;
+            }
+        }
+
+        public void Register(IGestureConsumer consumer) => consumers.Add(consumer);
+        public void Unregister(IGestureConsumer consumer) => consumers.Remove(consumer);
     }
 }
