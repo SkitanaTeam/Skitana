@@ -36,6 +36,18 @@ namespace Skitana.App.Framework.Input
             inputPanel.PointerMove += InputPanel_PointerMove;
             inputPanel.PointerLost += InputPanel_PointerLost;
             inputPanel.PointerUp += InputPanel_PointerUp;
+            inputPanel.MouseWheel += InputPanel_MouseWheel;
+        }
+
+        private void InputPanel_MouseWheel(object sender, MouseWheelEventArgs args)
+        {
+            var gesture = gesturesPool.Get();
+
+            gesture.Init(args.PointerId, args.Position, args.Position, args.Time);
+            gesture.GestureType = GestureType.MouseWheel;
+            gesture.Offset = new Vector2(0, args.WheelDelta);
+
+            Publish(gesture);
         }
 
         private void InputPanel_PointerDown(object sender, PointerEventArgs args)
@@ -117,7 +129,7 @@ namespace Skitana.App.Framework.Input
         private void InputPanel_PointerLost(object sender, PointerEventArgs args)
         {
             Vector2 origin = args.Position;
-            if (pointersDown.TryGetValue(args.PointerId, out var pointer))
+            if (pointersDown.TryRemove(args.PointerId, out var pointer))
             {
                 origin = pointer.Origin;
                 pointerDownElementsPool.Return(pointer);

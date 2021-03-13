@@ -8,6 +8,8 @@ using System.Numerics;
 using System.Windows;
 using System.Windows.Input;
 
+using MouseWheelEventArgs = Skitana.Input.Abstractions.Pointers.MouseWheelEventArgs;
+
 namespace Skitana.Input.WPF
 {
     internal class InputPanel : IInputPanel
@@ -16,6 +18,7 @@ namespace Skitana.Input.WPF
         public event EventHandler<PointerEventArgs> PointerUp;
         public event EventHandler<PointerEventArgs> PointerLost;
         public event EventHandler<PointerEventArgs> PointerMove;
+        public event EventHandler<MouseWheelEventArgs> MouseWheel;
 
         private long FirstMouseButton = 0;
         private readonly FrameworkElement element;
@@ -30,8 +33,18 @@ namespace Skitana.Input.WPF
             element.MouseDown += Element_MouseDown;
             element.MouseUp += Element_MouseUp;
             element.MouseLeave += Element_MouseLeave;
+            element.MouseWheel += Element_MouseWheel;
             this.element = element;
             this.applicationStopwatch = applicationStopwatch;
+        }
+
+        private void Element_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs args)
+        {
+            var position = GetPosition(args);
+            var buttons = GetMouseButtons(args);
+            var delta = args.Delta;
+
+            MouseWheel?.Invoke(this, new MouseWheelEventArgs(CurrentTime, position, PointerId.FromMouse(PointerId.MouseNoButton), buttons, delta));
         }
 
         private void Element_MouseLeave(object sender, MouseEventArgs args)
@@ -53,6 +66,8 @@ namespace Skitana.Input.WPF
             {
                 PointerLost?.Invoke(this, new PointerEventArgs(CurrentTime, position, PointerId.FromMouse(PointerId.MouseMiddleButton), buttons));
             }
+
+            PointerLost?.Invoke(this, new PointerEventArgs(CurrentTime, position, PointerId.FromMouse(PointerId.MouseNoButton), buttons));
         }
 
         private void Element_MouseUp(object sender, MouseButtonEventArgs args)
