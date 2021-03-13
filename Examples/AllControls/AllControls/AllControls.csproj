@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\Lama.png" />
+    <None Remove="Assets\Wabroye_014.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\Lama.png" />
+    <EmbeddedResource Include="Assets\Wabroye_014.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Core\Skitana.App.Framework\Skitana.App.Framework.csproj" />
+    <ProjectReference Include="..\..\..\Implementations\Other\Skitana.IO\Skitana.IO.csproj" />
+    <ProjectReference Include="..\..\Common\ExamplesCommon\ExamplesCommon.csproj" />
+  </ItemGroup>
+
+</Project>

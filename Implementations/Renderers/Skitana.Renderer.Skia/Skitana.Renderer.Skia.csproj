@@ -18,8 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Skitana\Skitana.DependencyInjection.Abstractions\Skitana.DependencyInjection.Abstractions.csproj" />
-    <ProjectReference Include="..\..\Skitana\Skitana.Renderer.Abstractions\Skitana.Renderer.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\Abstractions\Skitana.DependencyInjection.Abstractions\Skitana.DependencyInjection.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\Abstractions\Skitana.Renderer.Abstractions\Skitana.Renderer.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

@@ -11,9 +11,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Skitana\Skitana.App.Framework.Abstractions\Skitana.App.Framework.Abstractions.csproj" />
-    <ProjectReference Include="..\..\Skitana\Skitana.DependencyInjection.Abstractions\Skitana.DependencyInjection.Abstractions.csproj" />
-    <ProjectReference Include="..\..\Skitana\Skitana.Input.Abstractions\Skitana.Input.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\Abstractions\Skitana.App.Framework.Abstractions\Skitana.App.Framework.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\Abstractions\Skitana.DependencyInjection.Abstractions\Skitana.DependencyInjection.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\Abstractions\Skitana.Input.Abstractions\Skitana.Input.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>
