@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Skitana Team</Authors>
+    <Company>Skitana Team</Company>
+    <Product>Skitana</Product>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Abstractions\Skitana.App.Framework.Abstractions\Skitana.App.Framework.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\Abstractions\Skitana.DependencyInjection.Abstractions\Skitana.DependencyInjection.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\Abstractions\Skitana.Input.Abstractions\Skitana.Input.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

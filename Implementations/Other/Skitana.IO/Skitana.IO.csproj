@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Skitana.IO.Abstractions\Skitana.IO.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\Abstractions\Skitana.IO.Abstractions\Skitana.IO.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>
