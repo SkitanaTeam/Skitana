@@ -16,13 +16,10 @@ namespace Skitana.App.Framework.Input
         public Vector2 Position { internal set; get; }
         public Vector2 Offset { internal set; get; }
         public TimeSpan Time { internal set; get; }
-
         public object PointerCapturedBy { get; internal set; }
 
         public bool Handled { get; private set; }
-
         public void SetHandled() => Handled = true;
-
         internal void Reset() => Handled = false;
 
         public void CapturePointer(object captureBy)

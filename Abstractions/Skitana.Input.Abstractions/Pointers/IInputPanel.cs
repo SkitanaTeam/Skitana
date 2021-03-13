@@ -14,5 +14,6 @@ namespace Skitana.Input.Abstractions.Pointers
         event EventHandler<PointerEventArgs> PointerUp;
         event EventHandler<PointerEventArgs> PointerLost;
         event EventHandler<PointerEventArgs> PointerMove;
+        event EventHandler<MouseWheelEventArgs> MouseWheel;
     }
 }
