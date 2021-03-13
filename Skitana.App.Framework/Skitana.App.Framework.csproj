@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Company>Skitana Team</Company>
+    <Product>Skitana</Product>
+    <Authors>Skitana Team</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Skitana.App.Framework.Abstractions\Skitana.App.Framework.Abstractions.csproj" />
+    <ProjectReference Include="..\Skitana.DependencyInjection.Abstractions\Skitana.DependencyInjection.Abstractions.csproj" />
+    <ProjectReference Include="..\Skitana.Input.Abstractions\Skitana.Input.Abstractions.csproj" />
+    <ProjectReference Include="..\Skitana.IO.Abstractions\Skitana.IO.Abstractions.csproj" />
+    <ProjectReference Include="..\Skitana.Platform.Abstractions\Skitana.Platform.Abstractions.csproj" />
+    <ProjectReference Include="..\Skitana.Renderer.Abstractions\Skitana.Renderer.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

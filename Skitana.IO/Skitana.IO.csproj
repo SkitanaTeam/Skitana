@@ -3,13 +3,13 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Authors>Skitana Team</Authors>
     <Product>Skitana</Product>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
+    <ProjectReference Include="..\Skitana.IO.Abstractions\Skitana.IO.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>
